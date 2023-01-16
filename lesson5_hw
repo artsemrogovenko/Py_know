@@ -1,0 +1,193 @@
+""" 
+38. Напишите программу, удаляющую из текста все слова, содержащие ""абв"
+ """
+text = "ааабв,аа! араа, аабв вaбвд. Абв гд"
+text_list = text.split()
+print(text)
+print(text_list)
+result = list(filter(lambda x: not "абв" in x.lower() ,text_list))
+out=""
+for i in result:
+    out+=str(i)+" "
+print(out)
+""" 
+39(1). Создайте программу для игры с конфетами человек против человека. 
+Реализовать игру игрока против игрока в терминале. Игроки ходят друг за другом, 
+вписывая желаемое количество конфет. Первый ход определяется жеребьёвкой. В конце вывести игрока, который победил
+
+Условие задачи: На столе лежит 221 конфета. Играют два игрока делая ход друг после друга. 
+Первый ход определяется жеребьёвкой. За один ход можно забрать не более чем 28 конфет. 
+Все конфеты оппонента достаются сделавшему последний ход. 
+
+  В качестве дополнительного усложнения можно:
+  a) Добавьте игру против бота ( где бот берет рандомное количество конфет от 0 до 28) 
+  b) Подумайте как наделить бота ""интеллектом"" 
+  (есть алгоритм, позволяющий выяснить какое количесвто конфет необходимо брать, чтобы гарантированно победить, 
+  соответственно внедрить этот алгоритм боту )
+ """
+import random
+print("На столе 221 конфета,забрать за ход максимум 28 конфет, победит кто последний заберет конфеты")
+print("Варианты игры против компьютера: имя bot- случайное количество в разрешенном диапазоне ")
+print("\t\t\t\t имя smart_bot- бот с интелектом ")
+candy=221
+player=input("кто ходит первый? ")
+player_second=input("имя второго игрока ")
+player_list=[player,player_second]
+def get_candy(): return int(input(f"сколько забирает конфет {player} ? "))
+
+while candy > 28:
+ if player=="bot": 
+    picks=random.randint(1,29)
+    print(f"bot забирает конфет {picks}")
+ elif player=="smart_bot":
+    if(candy%2==1) or candy>84:
+        picks=random.randint(4,58)//2
+    else:
+        picks=random.randint(1,13)*2+1
+    if candy-28<=29:
+        picks=1
+    print(f"smart_bot забирает конфет {picks}")
+ else: picks=get_candy()    
+ if 29>picks>=1:
+        candy -= picks
+        print(f"осталось {candy} конфет")
+        if player == player_list[0]:
+            player = player_list[1]
+        else:
+            player = player_list[0]
+ else:
+    print("такое количество нельзя взять")
+print(f"победил {player}")
+
+
+"""  
+ 39(2). Создайте программу для игры в ""Крестики-нолики"". Игра реализуется в терминале, игроки ходят поочередно, 
+ необходимо вывести карту(как удобнее, можно например в виде списка, внутри которого будут 3 списка по 3 элемента, 
+ каждый из которого обозначает соответсвующие клетки от 1 до 9), сделать проверку не занята ли клетка, на которую 
+ мы хотим поставить крестик или нолик, и проверку на победу( стоят ли крестики или нолик в ряд по диагонали, вертикали, горизонтали)
+ """
+pole=[i for i in range(1,10)]
+print("Игра : крестики-нолики")
+def print_pole(lst): 
+    count=0
+    for i in lst:
+        if count<3:
+            if count==0 : print("\n",end="|") 
+            print(i, end="|")  
+            count+=1  
+        if count==3: 
+            count=0
+    print()
+print_pole(pole)
+
+def check_win():
+ if (pole[0]==pole[1]==pole[2] or pole[3]==pole[4]==pole[5] or pole[6]==pole[7]==pole[8] or
+    pole[0]==pole[3]==pole[6] or pole[1]==pole[4]==pole[7] or pole[2]==pole[5]==pole[8] or
+    pole[0]==pole[4]==pole[8] or pole[2]==pole[4]==pole[6]):
+    print(f"Победили {value}") 
+    print_pole(pole)
+    return 1
+    
+value="X"
+count=1
+while count<=len(pole):  
+    point = int(input(f"на какую клетку {value} -> "))
+    if 10>point>0:
+        if pole[point-1]!="X" and pole[point-1]!="O":
+            pole[point-1] = value
+            count += 1
+            if check_win()==1:
+                break
+            if value == "X":
+                value = "O"
+            else:
+                value = "X"
+        else:
+            print("клетка занята")
+    else:
+        print("нету такой клетки")
+    print_pole(pole)
+
+""" 
+Обязательная:
+40. Реализуйте RLE алгоритм: реализуйте модуль сжатия и восстановления данных.
+Модуль сжатия:
+Для чисел:
+Входные данные:
+111112222334445
+Выходные данные:
+5142233415
+Также должно работать и для букв:
+Входные данные:
+AAAAAAFDDCCCCCCCAEEEEEEEEEEEEEEEEE
+Выходные данные:
+6A1F2D7C1A17E
+(5 - количество единиц, далее сама единица, 4 - количество двоек, далее сама двойка и т.д)
+Модуль восстановления работет в обратную сторону - из строки выходных данных, получить строку входных данных.
+ """
+print("\nRLE алгоритм")
+
+def modulate(data):
+    data=str(data)
+    count=[]
+    value=[]
+    value.append(data[0])
+    cnt=0
+    result=""
+    for char in data:
+        if value[len(value)-1]==char:
+            cnt+=1
+        else:
+            count.append(cnt)
+            value.append(char)
+            cnt=1
+    count.append(cnt)
+    value.append(char)
+    for i in range(0,len(value)-1):
+     result+=f"{count[i]}{value[i]}"
+    return result
+
+def alpha(modulated):    
+    count=""
+    result=""
+    for char in str(modulated):
+        if char.isalpha():
+            for _ in range(int(count)): 
+                result+=char
+                count=""
+        else:
+            count+=char
+    return result
+
+
+def digits(modulated):    
+    temp=[i for i in modulated] # записываю каждую цифру отдельно
+    count=[]
+    value=[]
+    result=""
+    i=len(temp)-1
+
+    while i>=0:
+        value.insert(0,temp[i])
+        if int(temp[i-1])==0: # если количество кратно 10
+            if int(temp[i-2])!=0:
+                count.insert(0,int(f"{temp[i-2]}{temp[i-1]}"))
+                i=i-3
+        else:
+            count.insert(0,int(temp[i-1]))
+            i=i-2
+
+    for indx in range(len(value)):        
+        for _ in range(count[indx]):
+            result+=value[indx]
+    return result
+
+def demodulate(x):
+    for symbol in x: 
+        if symbol.isalpha():
+            print(alpha(x))
+            exit()
+    print(digits(x))
+
+print(modulate(input("что зашифровать?\n")))
+print(demodulate(input("что расшифровать?\n")))
