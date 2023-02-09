@@ -66,9 +66,9 @@ def start():
                  print(view.student_medal(book))
             elif op == 0:
                 exit()
-            # export=input("записать изменения в файл? Y/N ").lower()
-            # if export=='y':
-            #    write.csv_export(book,sciences)
+            export=input("записать изменения в файл? Y/N ").lower()
+            if export=='y':
+               write.csv_export(book,sciences)
      except Exception :
              print("ошибка")
  start()
